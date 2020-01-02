@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.order.dao.DetailOrderDao">
+    <resultMap id="detailOrderMap" type="DetailOrder">
+        <id column="detail_order_id" property="detailOrderId"/>
+        <result column="detail_order_count" property="detailOrderCount"/>
+        <result column="detail_order_price" property="detailOrderPrice"/>
+        <result column="order_id" property="orderId"/>
+        <association property="goods" column="goods_id" javaType="goods">
+            <id column="goods_id" property="goodsId"/>
+            <result column="goods_name" property="goodsName"/>
+            <result column="goods_price" property="goodsPrice"/>
+            <result column="goods_stock" property="goodsStock"/>
+        </association>
+    </resultMap>
+
+    <!-- 插入订单详情 -->
+    <insert id="insertDetailOrder" parameterType="DetailOrder">
+        insert into detail_order(goods_id, detail_order_count, detail_order_price, order_id)
+        values
+        (#{goods.goodsId}, #{detailOrderCount}, #{detailOrderPrice}, #{orderId})
+    </insert>
+
+    <!-- 批量插入 -->
+    <insert id="insertOrderList" parameterType="list">
+        insert into detail_order(goods_id, detail_order_count, detail_order_price, order_id)
+        values
+        <foreach collection="list" item="item" separator=",">
+            (
+            #{item.goods.goodsId}, #{item.detailOrderCount}, #{item.detailOrderPrice}, #{item.orderId}
+            )
+        </foreach>
+    </insert>
+</mapper>

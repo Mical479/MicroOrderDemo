@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.orderuser.dao.CartDao">
+
+    <resultMap id="cartMap" type="com.test.orderuser.beans.Cart">
+        <id column="cart_id" property="cartId" />
+        <result column="cart_number" property="cartNumber" />
+        <result column="user_id" property="userId" />
+        <association property="goods" javaType="com.test.orderuser.beans.Goods">
+            <id column="goods_id" property="goodsId"/>
+            <result column="goods_name" property="goodsName" />
+            <result column="goods_price" property="goodsPrice" />
+            <result column="goods_stock" property="goodsStock" />
+        </association>
+    </resultMap>
+
+    <!-- 用户加入购物车 -->
+    <insert id="insertGoodsToCart" parameterType="cart">
+       insert into cart(cart_number, user_id, goods_id) values (#{cartNumber}, #{userId}, #{goods.goodsId})
+    </insert>
+
+    <!-- 用户取出购物车 -->
+    <select id="getCartsListByUser" resultMap="cartMap">
+        select * from cart left join goods on cart.goods_id = goods.goods_id and user_id = #{userId}
+    </select>
+
+    <!-- 判断该用户是否已将某个商品加入购物车 -->
+    <select id="getCartByUserAndGoods" resultType="cart">
+        select * from cart where
+        <if test="cartId == null">
+            goods_id = #{goods.goodsId} and user_id = #{userId}
+        </if>
+        <if test="cartId != null">
+            cart_id = #{cartId}
+        </if>
+    </select>
+
+    <!-- 更新购物车的物品数量 -->
+    <update id="updateCartNumber">
+        update cart set cart_number = cart_number + #{cartNumber} where
+        <if test="cartId == null">
+            user_id = #{userId} and goods_id = #{goods.goodsId}
+        </if>
+        <if test="cartId != null">
+            cart_id = #{cartId}
+        </if>
+    </update>
+
+    <!-- 用户将物品从购物车中移除 -->
+    <delete id="delCart" parameterType="cart">
+        delete from cart where user_id=#{userId}
+        <if test="cartId != null">
+            and cart_id = #{cartId}
+        </if>
+    </delete>
+
+</mapper>

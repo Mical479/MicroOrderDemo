@@ -1,0 +1,43 @@
+server:
+  port: 8002
+spring:
+  application:
+    name: micro-order
+  datasource:
+    url: jdbc:mysql:///order?serverTimezone=UTC&useSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  rabbitmq:
+    listener:
+      simple:
+        acknowledge-mode: manual
+    host: 127.0.0.1
+    port: 5672
+    username: guest
+    password: guest
+  redis:
+    port: 6379
+    host: 127.0.0.1
+    password:
+    database: 0
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+    appname: ${spring.application.name}
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9001/eureka
+info:
+  app.name: micro-myorder
+  company.name: www.yuyongchang.com
+  build.artifactId: ${project.artifactId}
+  build.version: ${project.version}
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.test.order.beans
+  configuration:
+    map-underscore-to-camel-case: true
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

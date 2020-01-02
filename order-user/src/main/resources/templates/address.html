@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="/static/js/jquery.min.js"></script>
+<script src="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/js/bootstrap.js"></script>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/css/bootstrap.css" rel="stylesheet">
+<body style="margin-top: 50px">
+    <div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="/common/goods/listgoods">首页</a>
+                </li>
+                <li>
+                    <a href="/common/cart/listCart">购物车</a>
+                </li>
+                <li class="active">
+                    <a href="#">地址</a>
+                </li>
+                <li>
+                    <a href="/common/order/listOrder">我的订单</a>
+                </li>
+                <li>
+                    <a href="/common/order/failedOrder">未支付订单</a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h1>
+                    我的地址
+                </h1>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        收货人
+                    </th>
+                    <th>
+                        收货电话
+                    </th>
+                    <th>
+                        收货地址
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="success" th:each="address : ${addressList}">
+                    <td th:text="${address.addressName}">
+                    </td>
+                    <td th:text="${address.addressTel}">
+                    </td>
+                    <td th:text="${address.address}">
+                    </td>
+                    <td>
+                        <span class="label label-danger" th:if="${address.isDefault} eq '1'">默认地址</span>
+                        <button type="button" class="btn btn-primary del-address">删除该地址</button>
+                        <button type="button" class="btn btn-primary upd-address">修改地址</button>
+                        <input type="hidden" th:attr="value=${address.addressId}" />
+                        <input type="hidden" th:attr="value=${address.isDefault}" />
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn btn-danger" data-toggle="modal" data-target="#myModal">
+                新增地址
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade in" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">新增地址</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="addressName">收件人：</label>
+                        <input type="text" id="addressName" class="form-control" placeholder="姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="addressTel">电话：</label>
+                        <input type="text" id="addressTel" class="form-control" placeholder="收件人电话">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">地址：</label>
+                        <input type="text" id="address" class="form-control" placeholder="收货地址">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否默认:</label><br /> <input
+                            type="radio" class="control-label" id="default" value="1"
+                            name="is-default" />是&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" class="control-label"
+                                                     id="not-default" value="0" name="is-default" />否
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="submit-address">提交</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel2">新增地址</h4>
+            </div>
+            <div class="modal-body">
+                <form role="form">
+                    <div class="form-group">
+                        <label for="addressName">收件人：</label>
+                        <input type="text" id="addressName2" class="form-control" placeholder="姓名">
+                    </div>
+                    <div class="form-group">
+                        <label for="addressTel">电话：</label>
+                        <input type="text" id="addressTel2" class="form-control" placeholder="收件人电话">
+                    </div>
+                    <div class="form-group">
+                        <label for="address">地址：</label>
+                        <input type="text" id="address2" class="form-control" placeholder="收货地址">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否默认:</label><br /> <input
+                            type="radio" class="control-label" id="default2" value="1"
+                            name="is-default2" />是&nbsp;&nbsp;&nbsp;&nbsp; <input type="radio" class="control-label"
+                                                     id="not-default2" value="0" name="is-default2" />否
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" id="update-address">保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var addressId = "";
+
+        //提交地址信息
+        $("#submit-address").click(function () {
+            $.post('/common/address/addressAdd',{
+                addressName: $("#addressName").val(),
+                addressTel: $("#addressTel").val(),
+                address: $("#address").val(),
+                isDefault: $("input[name=is-default]:checked").val(),
+            }, function (res) {
+                if (res.msg === "成功"){
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            })
+        });
+
+        //删除地址
+        $(".del-address").click(function () {
+            $.post('/common/address/addressDel', {
+                addressId: $(this).next().next().val()
+            }, function (res) {
+                if (res.msg === "成功"){
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            })
+        });
+
+        /****   修改地址 ******/
+        //弹出模态框，并设置默认值
+        $(".upd-address").click(function () {
+            $("#addressName2").val($(this).parent().parent().children()[0].textContent);
+            $("#addressTel2").val($(this).parent().parent().children()[1].textContent);
+            $("#address2").val($(this).parent().parent().children()[2].textContent);
+            var isDefault = $(this).next().next().val();
+            addressId = $(this).next().val();
+            if (isDefault === "1") {
+                $("input[name=is-default2][value='1']").attr("checked",'checked');
+            }else{
+                $("input[name=is-default2][value='0']").attr("checked",'checked');
+            }
+            $('#myModal2').modal('show');
+        });
+
+        //更新地址信息
+        $("#update-address").click(function () {
+            $.post('/common/address/addressUpdate',{
+                addressName: $("#addressName2").val(),
+                addressTel: $("#addressTel2").val(),
+                address: $("#address2").val(),
+                addressId: addressId,
+                isDefault: $("input[name=is-default2]:checked").val()
+            }, function (res) {
+                if (res.msg === "成功"){
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            })
+        });
+
+    });
+</script>
+</html>

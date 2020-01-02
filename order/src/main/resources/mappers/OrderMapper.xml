@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.order.dao.OrderDao">
+    <resultMap id="orderMap" type="order">
+        <id column="order_id" property="orderId" />
+        <result column="order_count" property="orderCount" />
+        <result column="order_price" property="orderPrice" />
+        <result column="order_status" property="orderStatus" />
+        <result column="order_create_time" property="orderCreateTime" />
+        <result column="order_pay_time" property="orderPayTime" />
+        <result column="order_sign_time" property="orderSignTime" />
+        <result column="user_id" property="userId" />
+        <result column="address_id" property="addressId" />
+        <collection property="orderList" ofType="DetailOrder" column="order_id">
+            <id column="detail_order_id" property="detailOrderId" />
+            <result column="detail_order_count" property="detailOrderCount" />
+            <result column="detail_order_price" property="detailOrderPrice" />
+            <result column="order_id" property="orderId" />
+            <association property="goods" column="goods_id" javaType="goods">
+                <id column="goods_id" property="goodsId" />
+                <result column="goods_name" property="goodsName" />
+                <result column="goods_price" property="goodsPrice" />
+                <result column="goods_stock" property="goodsStock" />
+            </association>
+        </collection>
+    </resultMap>
+
+    <!-- 根据用户信息查询订单详情 -->
+    <select id="getOrderListByUser" resultMap="orderMap">
+        select * from `order` left join detail_order on `order`.order_id = detail_order.order_id left join goods on goods.goods_id = detail_order.goods_id
+         where `order`.user_id = #{userId}
+    </select>
+
+    <!-- 插入订单 -->
+    <insert id="insertOrder" parameterType="Order">
+        insert into `order`
+        (order_id, order_count, order_price, order_status, order_create_time, user_id, address_id)
+        values
+        (#{orderId}, #{orderCount}, #{orderPrice}, #{orderStatus}, #{orderCreateTime}, #{userId}, #{addressId})
+    </insert>
+
+    <select id="getOrderById" parameterType="string" resultMap="orderMap">
+        select * from `order` left join detail_order on `order`.order_id = detail_order.order_id left join goods on goods.goods_id = detail_order.goods_id where `order`.order_id = #{orderId}
+    </select>
+
+    <!-- 更新订单状态、订单支付时间、订单签收时间等信息 -->
+    <update id="updateOrder" parameterType="order">
+        update `order` set
+        <trim suffixOverrides=",">
+            <if test="orderStatus != null">
+                order_status = #{orderStatus},
+            </if>
+            <if test="orderPayTime != null">
+                order_pay_time = #{orderPayTime},
+            </if>
+            <if test="orderSignTime != null">
+                order_sign_time = #{orderSignTime},
+            </if>
+        </trim>
+        where order_id = #{orderId}
+    </update>
+
+    <!-- 已支付订单的查询 -->
+    <select id="getPayOrders" parameterType="order" resultMap="orderMap">
+        select * from `order` left join detail_order on `order`.order_id = detail_order.order_id left join goods on goods.goods_id = detail_order.goods_id
+        where `order`.order_status = #{orderStatus} and `order`.user_id = #{userId} order by `order`.order_create_time desc
+    </select>
+</mapper>

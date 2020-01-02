@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/css/bootstrap.css" rel="stylesheet">
+<script src="/static/js/jquery.min.js"></script>
+<body style="margin-top: 50px">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="/common/goods/listgoods">首页</a>
+                </li>
+                <li class="active">
+                    <a href="#">购物车</a>
+                </li>
+                <li>
+                    <a href="/common/address/listAddress">地址</a>
+                </li>
+                <li>
+                    <a href="/common/order/listOrder">我的订单</a>
+                </li>
+                <li>
+                    <a href="/common/order/failedOrder">未支付订单</a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h1>
+                    我的购物车
+                    <small><span style="color: brown" class="glyphicon glyphicon-shopping-cart"><span class="badge"
+                                                                                                      th:text="${cartSize}"></span></span>
+                    </small>
+                </h1>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        产品
+                    </th>
+                    <th>
+                        数量
+                    </th>
+                    <th>
+                        单价
+                    </th>
+                    <th>
+                        总价
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="success" th:each="cart : ${myCarts}">
+                    <td th:text="${cart.goods.goodsName}">
+                    </td>
+                    <td th:text="${cart.cartNumber}">
+                    </td>
+                    <td th:text="${cart.goods.goodsPrice} + '￥'">
+                    </td>
+                    <td th:text="(${cart.goods.goodsPrice} * ${cart.cartNumber}) + '￥'">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success add-cart increase">加1</button>
+                        <button type="button" class="btn btn-success add-cart decrease">减1</button>
+                        <button type="button" class="btn btn-primary delete">删除该商品</button>
+                        <input type="hidden" th:attr="value=${cart.cartId}" class="cart-id">
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button type="button" class="btn btn-danger getAll">立即结算</button>
+            <button type="button" class="btn btn-primary delAll">清空购物车</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        //增加数量
+        $(".increase").click(function () {
+            $.post('/common/cart/cartUpdate', {
+                cartNumber: "1",
+                cartId: $(this).next().next().next().val()
+            }, function (res) {
+                if (res.msg == "成功") {
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            });
+        });
+
+        //减少数量
+        $(".decrease").click(function () {
+            $.post('/common/cart/cartUpdate', {
+                cartNumber: "-1",
+                cartId: $(this).next().next().val()
+            }, function (res) {
+                if (res.msg == "成功") {
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            });
+        });
+
+        //删除购物车中某个物品
+        $(".delete").click(function () {
+            $.post('/common/cart/cartDel', {
+                cartId: $(this).next().val(),
+                deleteAll: false
+            }, function (res) {
+                if (res.msg == "成功") {
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            })
+        });
+
+        //清空购物车
+        $(".delAll").click(function () {
+            $.post('/common/cart/cartDel', {
+                cartId: $(this).next().val(),
+                deleteAll: true
+            }, function (res) {
+                if (res.msg == "成功") {
+                    window.location.reload();
+                } else {
+                    alert(res.msg);
+                }
+            })
+        });
+
+        //购物车结算
+        $(".getAll").click(function () {
+            var cartArr = new Array();
+            var $cartId = $(".cart-id");
+            $cartId.each(function () {
+                cartArr.push($(this).val().trim());
+            });
+            $.ajax({
+                url: "/order/order_count",
+                contentType: "application/json",
+                data: JSON.stringify(cartArr),
+                type: "POST",
+                success: function (data) {
+                    if (data.msg === "成功") {
+                        // localStorage.setItem("myOrder", JSON.stringify(data.data));
+                        window.location.href = "/common/user/order?orderId=" + data.data.orderId;
+                    } else {
+                        alert(data.msg);
+                    }
+                }
+            })
+        })
+    });
+</script>
+</html>

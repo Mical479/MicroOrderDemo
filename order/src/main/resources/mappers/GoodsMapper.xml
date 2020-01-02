@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.order.dao.GoodsDao">
+
+    <!-- 查询用户的默认地址 -->
+    <update id="updateGoodsStock" parameterType="goods">
+
+            update goods set goods_stock = goods_stock + #{goodsStock} where goods_id = #{goodsId}
+
+    </update>
+
+    <select id="getGoodsStock" resultType="int">
+        select goods_stock from goods where goods_id = #{goodsId}
+    </select>
+</mapper>

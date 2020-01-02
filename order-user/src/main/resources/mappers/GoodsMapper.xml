@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.orderuser.dao.GoodsDao">
+
+    <resultMap id="goodsMap" type="goods">
+        <id column="goods_id" property="goodsId"/>
+        <result column="goods_name" property="goodsName" />
+        <result column="goods_price" property="goodsPrice" />
+        <result column="goods_stock" property="goodsStock" />
+    </resultMap>
+
+    <!-- 获取所有的商品 -->
+    <select id="getGoodsList" resultType="goods">
+        select * from goods
+    </select>
+
+    <!-- 根据商品ID获取商品 -->
+    <select id="getGoodsById" resultMap="goodsMap">
+        select * from goods where goods_id = #{goodsId};
+    </select>
+
+</mapper>

@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/css/bootstrap.css" rel="stylesheet">
+<script src="/static/js/jquery.min.js"></script>
+<body style="margin-top: 50px">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#">首页</a>
+                </li>
+                <li>
+                    <a href="/common/cart/listCart">购物车</a>
+                </li>
+                <li>
+                    <a href="/common/address/listAddress">地址</a>
+                </li>
+                <li>
+                    <a href="/common/order/listOrder">我的订单</a>
+                </li>
+                <li>
+                    <a href="/common/order/failedOrder">未支付订单</a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h1>
+                    商品列表 <small><span style="color: brown" class="glyphicon glyphicon-shopping-cart"><span class="badge" th:text="${cartSize}"></span></span></small>
+                </h1>
+            </div>
+            <table class="table table-bordered">
+                <thead>
+                <tr>
+                    <th>
+                        编号
+                    </th>
+                    <th>
+                        产品
+                    </th>
+                    <th>
+                        价格
+                    </th>
+                    <th>
+                        库存
+                    </th>
+                    <th>
+                        操作
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="success" th:each="goods : ${goodsList}">
+                    <td th:text="${goods.goodsId}" class="goods-id">
+                    </td>
+                    <td th:text="${goods.goodsName}">
+                    </td>
+                    <td th:text="${goods.goodsPrice} + '￥'">
+                    </td>
+                    <td th:text="${goods.goodsStock}">
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-success add-cart">加入购物车</button>
+                        <input type="hidden" th:attr="value=${goods.goodsId}">
+                        <button type="button" class="btn btn-primary">立即购买</button>
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+            <ul class="pagination">
+                <li>
+                    <a href="#">Prev</a>
+                </li>
+                <li>
+                    <a href="#">1</a>
+                </li>
+                <li>
+                    <a href="#">2</a>
+                </li>
+                <li>
+                    <a href="#">3</a>
+                </li>
+                <li>
+                    <a href="#">4</a>
+                </li>
+                <li>
+                    <a href="#">5</a>
+                </li>
+                <li>
+                    <a href="#">Next</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".add-cart").click(function () {
+            $.post('/common/goods/addtocart', {
+                cartNumber: "1",
+                goodsId: $(this).next().val()
+            }, function (res) {
+                if(res.msg == "成功"){
+                    var jQuery = parseInt($(".badge").text());
+                    jQuery += 1;
+                    $(".badge").text(jQuery);
+                }
+                alert(res.msg);
+            });
+        });
+    });
+</script>
+</html>

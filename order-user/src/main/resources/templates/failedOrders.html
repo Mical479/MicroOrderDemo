@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/css/bootstrap.css" rel="stylesheet">
+<script src="/static/js/jquery.min.js"></script>
+<body style="margin-top: 50px">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="/common/goods/listgoods">首页</a>
+                </li>
+                <li>
+                    <a href="/common/cart/listCart">购物车</a>
+                </li>
+                <li>
+                    <a href="/common/address/listAddress">地址</a>
+                </li>
+                <li>
+                    <a href="/common/order/listOrder">我的订单</a>
+                </li>
+                <li class="active">
+                    <a href="/common/order/failedOrder">未支付订单</a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h1>
+                    我的订单
+                </h1>
+            </div>
+            <div class="container" id="app">
+                <div class="container">
+                    <div class="row clearfix">
+                        <div class="col-md-12 column">
+                            <div class="panel panel-primary" th:each="order : ${orders}">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">
+                                        <span th:text="'订单id：' + ${order.orderId}"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span th:text="'订单总额：' + ${order.orderPrice} + '元'"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                        <span th:text="'订单创建时间：' + ${order.orderCreateTime}"></span>
+                                    </h3>
+                                </div>
+                                <div class="panel-body" th:each="detailOrder : ${order.orderList}">
+                                    <span th:text="${detailOrder.goods.goodsName}"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span th:text="${detailOrder.detailOrderCount} + '件'"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                    <span th:text="${detailOrder.detailOrderPrice} + '元'"></span>
+                                </div>
+                                <div class="panel-footer">
+                                    <input type="button" class="btn btn-primary gotopay" value="我要支付"/>
+<!--                                    <input type="button" class="btn btn-primary close" value="取消该订单"/>-->
+                                    <input type="hidden" th:attr="value=${order.orderId}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $(".gotopay").click(function () {
+            var orderId = $(this).next().val();
+            window.location.href = "/common/user/order?orderId=" + orderId;
+        });
+
+        $(".close").click(function () {
+            var orderId = $(this).next().val();
+            $.post("/order/alipayclose",{
+                orderId: orderId
+            }, function (res) {
+                alert(res.data);
+            })
+        })
+    });
+</script>
+</html>

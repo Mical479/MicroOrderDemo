@@ -1,0 +1,41 @@
+server:
+  port: 8001
+spring:
+  application:
+    name: micro-common
+  datasource:
+    url: jdbc:mysql:///order?serverTimezone=UTC&useSSL=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+  mvc:
+    view:
+      prefix: classpath:/templates/
+      suffix: .html
+  thymeleaf:
+    cache: false
+eureka:
+  instance:
+    prefer-ip-address: true
+    lease-renewal-interval-in-seconds: 10
+    lease-expiration-duration-in-seconds: 20
+    appname: ${spring.application.name}
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:9001/eureka
+info:
+  app.name: micro-myorder
+  company.name: www.yuyongchang.com
+  build.artifactId: ${project.artifactId}
+  build.version: ${project.version}
+mybatis:
+  mapper-locations: classpath:mappers/*.xml
+  type-aliases-package: com.test.orderuser.beans
+  configuration:
+    map-underscore-to-camel-case: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+#cas:
+#  server-url-prefix: https://www.sso.com:8443/cas
+#  server-login-url: https://www.sso.com:8443/cas/login
+#  client-host-url: http://www.user.com:8001

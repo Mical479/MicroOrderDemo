@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.test.order.dao.CartDao">
+
+    <resultMap id="cartMap" type="com.test.order.beans.Cart">
+        <id column="cart_id" property="cartId" />
+        <result column="cart_number" property="cartNumber" />
+        <result column="user_id" property="userId" />
+        <association property="goods" javaType="com.test.order.beans.Goods">
+            <id column="goods_id" property="goodsId"/>
+            <result column="goods_name" property="goodsName" />
+            <result column="goods_price" property="goodsPrice" />
+            <result column="goods_stock" property="goodsStock" />
+        </association>
+    </resultMap>
+
+    <!-- 用户取出购物车 -->
+    <select id="getCartsListByUser" resultMap="cartMap">
+        select * from cart left join goods on cart.goods_id = goods.goods_id and user_id = #{userId}
+    </select>
+
+    <!-- 根据cartID，批量取出数据 -->
+    <select id="getCartListByCartId" resultMap="cartMap">
+        select * from cart left join goods on cart.goods_id = goods.goods_id and cart.cart_id in (
+            <foreach collection="list" item="id" separator=",">
+                #{id}
+            </foreach>
+        )
+    </select>
+
+    <!-- 根据cartID，批量删除数据 -->
+    <delete id="deleteCartListByCartId" parameterType="list">
+        delete from cart where cart_id in (
+            <foreach collection="list" item="item" separator=",">
+            #{item}
+            </foreach>
+        )
+    </delete>
+</mapper>

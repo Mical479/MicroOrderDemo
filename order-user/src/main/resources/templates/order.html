@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<link href="https://cdn.bootcss.com/twitter-bootstrap/3.0.1/css/bootstrap.css" rel="stylesheet">
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/vue.js"></script>
+<body style="margin-top: 50px">
+<div class="container">
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <ul class="nav nav-tabs">
+                <li>
+                    <a href="/common/goods/listgoods">首页</a>
+                </li>
+                <li>
+                    <a href="/common/cart/listCart">购物车</a>
+                </li>
+                <li>
+                    <a href="/common/address/listAddress">地址</a>
+                </li>
+            </ul>
+            <div class="page-header">
+                <h1>
+                    我的订单
+                </h1>
+            </div>
+            <div class="container" id="app">
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <dl class="dl-horizontal">
+                            <dt>
+                                订单编号：
+                            </dt>
+                            <dd th:text="${order.orderId}">
+                            </dd>
+                            <dt>
+                                订单总数：
+                            </dt>
+                            <dd th:text="${order.orderCount} + '件'">
+
+                            </dd>
+                            <dt>
+                                订单总价：
+                            </dt>
+                            <dd th:text="${order.orderPrice} + '元'"></dd>
+                            <dt>
+                                订单状态：
+                            </dt>
+                            <dd th:text="${order.orderStatus}"></dd>
+                            <dt>
+                                创单时间：
+                            </dt>
+                            <dd th:text="${order.orderCreateTime}"></dd>
+
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>物品名称</th>
+                                    <th>物品数量</th>
+                                    <th>物品单价</th>
+                                    <th>物品总价</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr th:each="item : ${order.orderList}">
+                                    <td th:text="${item.goods.goodsName}"></td>
+                                    <td th:text="${item.detailOrderCount}"></td>
+                                    <td th:text="${item.goods.goodsPrice}"></td>
+                                    <td th:text="${item.detailOrderPrice}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </dl>
+                    </div>
+                </div>
+                <form action="/order/getPagePay" method="post">
+                    <input type="hidden" th:attr="value=${order.orderId}" name="orderId" />
+                    <input type="submit" class="btn btn-danger" />
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var app = new Vue({
+        el: '#app',
+        data: {
+            order: ''
+        },
+        methods: {},
+        mounted: function () {
+            // this.order = JSON.parse(localStorage.getItem("myOrder"));
+        }
+    });
+</script>
+</html>
